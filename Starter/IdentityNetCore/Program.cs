@@ -30,6 +30,12 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredUniqueChars = 1;
 });
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Identity/Signin";
+    options.AccessDeniedPath = "/Identity/AccessDenied";
+
+});
 
 var app = builder.Build();
 
