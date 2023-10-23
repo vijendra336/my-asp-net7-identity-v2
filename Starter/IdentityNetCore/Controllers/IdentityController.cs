@@ -60,7 +60,16 @@ namespace IdentityNetCore.Controllers
         [HttpPost]
         public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {
+            var user = await userManager.FindByIdAsync(userId);
 
+            var result =userManager.ConfirmEmailAsync(user, token);
+
+            if (result.IsCompletedSuccessfully)
+            {
+                return RedirectToAction("Signin");
+            }
+
+            return new NotFoundResult();
         }
 
         public async Task<IActionResult> Signin()
