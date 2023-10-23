@@ -37,11 +37,11 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Identity/Signin";
     options.AccessDeniedPath = "/Identity/AccessDenied";
-
+    options.ExpireTimeSpan = TimeSpan.FromHours(10);
 });
 
 builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
-builder.Services.AddSingleton<IEmailService, SmtpEmailSender>();
+builder.Services.AddSingleton<IEmailSender, SmtpEmailSender>();
 
 var app = builder.Build();
 

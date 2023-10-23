@@ -4,7 +4,7 @@ using System.Net.Mail;
 
 namespace IdentityNetCore.Service
 {
-    public class SmtpEmailSender : IEmailService
+    public class SmtpEmailSender : IEmailSender
     {
         private readonly IOptions<SmtpOptions> options;
 
@@ -21,6 +21,7 @@ namespace IdentityNetCore.Service
                 Credentials = new NetworkCredential(options.Value.Username, options.Value.Password)
             })
             {
+                await client.SendMailAsync(mailMessage);
             }
         }
     }
