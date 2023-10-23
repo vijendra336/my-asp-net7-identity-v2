@@ -128,9 +128,17 @@ namespace IdentityNetCore.Controllers
 
             return View(model);
         }
+
         public async Task<IActionResult> AccessDenied()
         {
             return View();
+        }
+
+        public async Task<IActionResult> Signout()
+        {
+            await signinManager.SignOutAsync();
+
+            return RedirectToAction("Signin");
         }
     }
 }
