@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Signup";
+    var roles = new List<string>() { "Member", "Admin" };
 }
 <h1>Signup </h1>
 
@@ -14,6 +15,10 @@
     <div class="form-group col-4">
         <label asp-for="Password">Password </label>
         <input type="text" asp-for="Password" class="form-control" />
+    </div>
+    <div class="form-group col-4">
+        <label asp-for="Role">Role </label>
+       @Html.DropDownListFor(x=>x.Role, roles.Select(s=> new SelectListItem{ Text=s, Value=s}), "Roles", null))
     </div>
     <button type="submit" class="btn btn-primary">Signup!</button>
 
