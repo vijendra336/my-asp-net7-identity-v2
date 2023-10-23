@@ -1,4 +1,5 @@
 ﻿using IdentityNetCore.Models;
+using IdentityNetCore.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,10 +8,12 @@ namespace IdentityNetCore.Controllers
     public class IdentityController : Controller
     {
         private readonly UserManager<IdentityUser> userManager;
+        private readonly IEmailSender emailSender;
 
-        public IdentityController(UserManager<IdentityUser> userManager)
+        public IdentityController(UserManager<IdentityUser> userManager, IEmailSender emailSender)
         {
             this.userManager = userManager;
+            this.emailSender = emailSender;
         }
         public async Task<IActionResult> Signup()
         {
@@ -35,9 +38,15 @@ namespace IdentityNetCore.Controllers
                     };
 
                     var result = await userManager.CreateAsync(user, model.Password);
+                    user = await userManager.FindByEmailAsync(user.Email);
+
+                    var token = await userManager.GenerateEmailConfirmationTokenAsync(user); 
 
                     if (result.Succeeded)
                     {
+                       var confirmationLink= Url.ActionLink("ConfirmEmail", "Identity", new { userId= user.Id, @token = token });
+
+                        await emailSender.SendEmailAsync("info@mydomain.com", user.Email , "Confirm your email address.", confirmationLink);
                         return RedirectToAction("Signin", "Identity");
                     }
 
@@ -46,6 +55,12 @@ namespace IdentityNetCore.Controllers
                 }
             }
             return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+
         }
 
         public async Task<IActionResult> Signin()
