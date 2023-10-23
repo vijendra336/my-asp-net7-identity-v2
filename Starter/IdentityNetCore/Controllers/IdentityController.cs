@@ -96,11 +96,8 @@ namespace IdentityNetCore.Controllers
                     ModelState.AddModelError("Login", "Cannot login.");
                 }
             }
-            else
-            {
-                return View(model);
-            }
 
+            return View(model);
         }
         public async Task<IActionResult> AccessDenied()
         {
