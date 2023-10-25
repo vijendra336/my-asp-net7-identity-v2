@@ -2,6 +2,7 @@
 using IdentityNetCore.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace IdentityNetCore.Controllers
 {
@@ -63,6 +64,10 @@ namespace IdentityNetCore.Controllers
 
                     if (result.Succeeded)
                     {
+                        // adding department into claim
+                        var claim = new Claim("Department", model.Department);
+                        await userManager.AddClaimAsync(user, claim);
+
                         // adding user role 
                         await userManager.AddToRoleAsync(user, model.Role);
 
@@ -109,6 +114,13 @@ namespace IdentityNetCore.Controllers
                 if(result.Succeeded)
                 {
                     var user = await userManager.FindByEmailAsync(model.Username);
+                    var userClaims = await userManager.GetClaimsAsync(user);
+
+                    if (!userClaims.Any(claim=>claim.Type=="Department"))
+                    {
+                        ModelState.AddModelError("Claim", "User not in Tech department.");
+                        return View(model);
+                    }
                     if (await userManager.IsInRoleAsync(user, "Member"))
                     {
                         return RedirectToAction("Member");

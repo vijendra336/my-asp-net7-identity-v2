@@ -9,7 +9,7 @@
         <a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="Signout">Signout</a>
     </li>
     <li class="nav-item">
-       <label> Hello @User.Identity.Name </label>
+       <label> Hello @User.Identity.Name  (@User.Claims.FirstOrDefault(claim=> claim.Type=="Department")) </label>
     </li>
 }
 else
