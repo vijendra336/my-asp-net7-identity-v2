@@ -161,6 +161,7 @@ namespace IdentityNetCore.Controllers
 
         public async Task<IActionResult> MFASetup()
         {
+            const string provider = "aspnetidentity";
             // generate token for MFA
             var user = await userManager.GetUserAsync(User);
             // reset the 2FA or MFA token 
@@ -168,7 +169,10 @@ namespace IdentityNetCore.Controllers
 
             var token = await userManager.GetAuthenticatorKeyAsync(user);
 
-            var model = new MFAViewModel() { Token = token };
+            //QR Code url 
+            var qrCodeUrl = $"otpauth://totp/{provider}:{user.Email}?secret={token}&issuer={provider}&digit=6";
+
+            var model = new MFAViewModel() { Token = token , QRCodeUrl=qrCodeUrl};
 
             return View(model);
         }
