@@ -68,6 +68,13 @@ builder.Services.AddAuthorization(options =>
 
 });
 
+builder.Services.AddAuthentication().AddFacebook(options =>
+{
+    options.AppId = builder.Configuration["FacebookAppId"];
+    options.AppSecret = builder.Configuration["FacebookAppSecret"];
+
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

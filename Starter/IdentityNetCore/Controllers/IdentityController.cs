@@ -199,5 +199,27 @@ namespace IdentityNetCore.Controllers
 
             return View(model);
         }
+
+        [HttpPost]
+        public IActionResult ExternalLogin(string provider, string returnUrl=null)
+        {
+            // Either Redirect to Facebook or Google based on provider
+            var properties = signinManager.ConfigureExternalAuthenticationProperties(provider, returnUrl);
+
+            // helper class Url - create a link to call  ExternalLoginCallback action method 
+            var callbackUrl = Url.Action("ExternalLoginCallback");
+
+            properties.RedirectUri = callbackUrl;
+
+            // sending the user back to external provider.
+            return Challenge(properties, provider);
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ExternalLoginCallback()
+        {
+            return View();
+        }
     }
 }
