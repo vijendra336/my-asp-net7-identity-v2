@@ -219,7 +219,26 @@ namespace IdentityNetCore.Controllers
         [HttpPost]
         public async Task<IActionResult> ExternalLoginCallback()
         {
-            return View();
+            var info = await signinManager.GetExternalLoginInfoAsync();
+            //var claims = info.Principal.Claims;
+            var emailClaim = info.Principal.Claims.FirstOrDefault(s=>s.Type == ClaimTypes.Email);
+
+            //for create user in identityUser  store or db 
+            var user = new IdentityUser
+            {
+                Email = emailClaim.Value,
+                UserName = emailClaim.Value
+            };
+
+            // not need password as we use Facebook for authentication
+            await userManager.CreateAsync(user);
+
+            //login info also add -Because in ASP.Net Identity you have to link your local user to the external user, which is in Facebook.
+            await userManager.AddLoginAsync(user, info);
+            // finally signin 
+            await signinManager.SignInAsync(user, isPersistent: false);
+            
+            return RedirectToAction("Index","Home");
         }
     }
 }
