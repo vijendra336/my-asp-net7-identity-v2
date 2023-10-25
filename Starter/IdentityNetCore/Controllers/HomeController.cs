@@ -19,8 +19,9 @@ namespace IdentityNetCore.Controllers
             return View();
         }
 
-        [Authorize(Roles = "Member")]
-        [Authorize(Policy = "Dep")]
+        //[Authorize(Roles = "Member")]
+        //[Authorize(Policy = "Dep")]
+        [Authorize(Policy = "MemberDep")]
         public IActionResult Member()
         {
             return View();
