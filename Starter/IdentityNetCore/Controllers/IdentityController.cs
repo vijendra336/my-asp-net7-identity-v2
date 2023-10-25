@@ -2,6 +2,9 @@
 using IdentityNetCore.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using System.Numerics;
 using System.Security.Claims;
 
 namespace IdentityNetCore.Controllers
@@ -23,7 +26,7 @@ namespace IdentityNetCore.Controllers
         }
         public async Task<IActionResult> Signup()
         {
-            var model = new SignupViewModel() { Role= "Member"};
+            var model = new SignupViewModel() { Role = "Member" };
 
             return View(model);
         }
@@ -42,7 +45,7 @@ namespace IdentityNetCore.Controllers
                     if (!roleResult.Succeeded)
                     {
                         var errors = roleResult.Errors.Select(s => s.Description);
-                        ModelState.AddModelError("Role",string.Join(",", errors));
+                        ModelState.AddModelError("Role", string.Join(",", errors));
                     }
                 }
 
@@ -57,7 +60,7 @@ namespace IdentityNetCore.Controllers
                     };
 
                     var result = await userManager.CreateAsync(user, model.Password);
-                    
+
                     user = await userManager.FindByEmailAsync(user.Email);
 
                     var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -110,8 +113,8 @@ namespace IdentityNetCore.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result =await signinManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, false);
-                if(result.Succeeded)
+                var result = await signinManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, false);
+                if (result.Succeeded)
                 {
                     var user = await userManager.FindByEmailAsync(model.Username);
                     var userClaims = await userManager.GetClaimsAsync(user);
@@ -153,6 +156,44 @@ namespace IdentityNetCore.Controllers
             await signinManager.SignOutAsync();
 
             return RedirectToAction("Signin");
+        }
+
+
+        public async Task<IActionResult> MFASetup()
+        {
+            // generate token for MFA
+            var user = await userManager.GetUserAsync(User);
+            // reset the 2FA or MFA token 
+            await userManager.ResetAuthenticatorKeyAsync(user); 
+
+            var token = await userManager.GetAuthenticatorKeyAsync(user);
+
+            var model = new MFAViewModel() { Token = token };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> MFASetup(MFAViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await userManager.GetUserAsync(User);
+                var succeeded= await userManager.VerifyTwoFactorTokenAsync(user, userManager.Options.Tokens.AuthenticatorTokenProvider, model.Code);
+                if (succeeded)
+                {
+                    // enable 2 factor authentication
+                    // this user so that next time they try to  log in, we ask for the two factor authentication code
+                    await userManager.SetTwoFactorEnabledAsync(user, true);
+
+                }
+                else
+                {
+                    ModelState.AddModelError("Verify", "Your MFA code could not be validated");
+                }
+            }
+
+            return View(model);
         }
     }
 }
