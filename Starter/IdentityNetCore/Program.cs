@@ -43,6 +43,31 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
 builder.Services.AddSingleton<IEmailSender, SmtpEmailSender>();
 
+//Adding claim or policy 
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.AddPolicy("Dep", p =>
+//    {
+//        p.RequireClaim("Department", "Tech","Account");
+//    });
+//});
+
+//combine claim policy with Roles 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("MemberDep", p =>
+    {
+        p.RequireClaim("Department", "Tech").RequireRole("Member");
+    });
+
+    // Add more policies  like for admin
+    //options.AddPolicy("AdminDep", p =>
+    //{
+    //    p.RequireClaim("Department", "Tech").RequireRole("Admin");
+    //});
+
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

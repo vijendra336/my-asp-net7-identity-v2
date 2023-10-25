@@ -116,11 +116,13 @@ namespace IdentityNetCore.Controllers
                     var user = await userManager.FindByEmailAsync(model.Username);
                     var userClaims = await userManager.GetClaimsAsync(user);
 
-                    if (!userClaims.Any(claim=>claim.Type=="Department"))
-                    {
-                        ModelState.AddModelError("Claim", "User not in Tech department.");
-                        return View(model);
-                    }
+                    // Instead use policies -> to check claims using Authorize Attribute 
+                    //if (!userClaims.Any(claim=>claim.Type=="Department"))
+                    //{
+                    //    ModelState.AddModelError("Claim", "User not in Tech department.");
+                    //    return View(model);
+                    //}
+
                     if (await userManager.IsInRoleAsync(user, "Member"))
                     {
                         return RedirectToAction("Member");

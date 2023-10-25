@@ -20,6 +20,7 @@ namespace IdentityNetCore.Controllers
         }
 
         [Authorize(Roles = "Member")]
+        [Authorize(Policy = "Dep")]
         public IActionResult Member()
         {
             return View();
