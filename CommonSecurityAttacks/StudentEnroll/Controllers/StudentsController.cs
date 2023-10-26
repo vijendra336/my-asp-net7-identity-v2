@@ -11,6 +11,7 @@ namespace StudentEnroll.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Signup(StudentViewModel model)
         {
             return View("Result",model);
