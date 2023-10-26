@@ -28,6 +28,7 @@ namespace IdentityNetCore.Controllers
 
         [AllowAnonymous]
         [Route(template:"Auth")]
+        [HttpPost]
         public async Task<IActionResult> TokenAuth(SigninViewModel model)
         {
             var issuer = configuration["Tokens:issuer"];

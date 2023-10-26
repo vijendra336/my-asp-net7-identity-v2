@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityNetCore.Controllers
@@ -9,6 +11,7 @@ namespace IdentityNetCore.Controllers
     {
         [HttpGet]
         [Route(template:"List")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public List<Product> GetProducts()
         {
             var chair = new Product { Name = "Chair", Price = 100 };
