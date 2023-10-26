@@ -109,6 +109,7 @@ namespace IdentityNetCore.Controllers
         }
 
         [HttpPost]
+        //[EnableCors("MyCorsPolicy")]
         public async Task<IActionResult> Signin(SigninViewModel model)
         {
             if (ModelState.IsValid)

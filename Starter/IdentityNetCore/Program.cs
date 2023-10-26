@@ -87,12 +87,18 @@ builder.Services.AddAuthentication().AddFacebook(options =>
     {
         ValidIssuer = issuer,
         ValidAudience = audience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
-    }
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+    };
 });
 
-
-
+// 2 way Enable CORS inject it in middleware 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("MyCorsPolicy", cors =>
+    {
+        cors.WithOrigins("http://localhost:53742").WithMethods("Get").AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 
@@ -111,6 +117,15 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+//1 way Enable CORS  --client url--
+//app.UseCors(options =>
+//{
+//    options.WithOrigins("http://localhost:53742").WithMethods("Get").AllowAnyHeader();
+//});
+
+//2 way Enable CORS matches with policy name in services collection 
+app.UseCors("MyCorsPolicy");
 
 app.MapControllerRoute(
     name: "default",
