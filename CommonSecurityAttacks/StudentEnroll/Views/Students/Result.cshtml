@@ -13,4 +13,6 @@
 <h2>Raw Result -> @Html.Raw(Model.FullName )</h2>
 
 @* Encode Anything  *@
-<h2>Raw Result -> @Html.Raw(Model.FullName )</h2>
+<h2>HTML Encoder -> @HtmlEncoder.Encode(Model.FullName )</h2>
+<h2>Javascript Encoder -> @JavaScriptEncoder.Encode("<script> alert('this is XSS attack ') </script>" )</h2>
+<h2>Url Encoder -> @UrlEncoder.Encode(Model.FullName )</h2>
