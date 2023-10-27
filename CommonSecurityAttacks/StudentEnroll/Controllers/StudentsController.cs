@@ -3,6 +3,7 @@ using StudentEnroll.Models;
 
 namespace StudentEnroll.Controllers
 {
+    [AutoValidateAntiforgeryToken]
     public class StudentsController : Controller
     {
         public IActionResult Index()
